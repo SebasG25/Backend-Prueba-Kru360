@@ -26,11 +26,11 @@ const ContactSchema = new mongoose.Schema({
         type: String
     },
     type: {
-        type: ['tipo1', 'tipo2'],
+        type: String,
         default: 'tipo1'
     },
     origin: {
-        type: ['origin1', 'origin2'],
+        type: String,
         default: 'origin1'
     }
 }, {

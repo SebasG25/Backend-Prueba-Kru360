@@ -1,4 +1,5 @@
 const { contactsModel } = require('../models')
+const { handleHttpError } = require('../utils/handleError')
 
 /**
  * It's an async function that gets all the contacts from the database and sends them back to the
@@ -7,8 +8,12 @@ const { contactsModel } = require('../models')
  * @param res - The response object.
  */
 const getContacts = async (req, res) => {
-    const data = await contactsModel.find({})
-    res.send({ data })
+    try {
+        const data = await contactsModel.find({})
+        res.send({ data })
+    } catch (error) {
+        handleHttpError(res, 'ERROR_GET_CONTACTS')
+    }
 }
 
 /**
@@ -18,9 +23,13 @@ const getContacts = async (req, res) => {
  * @param res - the response object
  */
 const getContact = async (req, res) => {
-    const { id } = req.params
-    const data = await contactsModel.findById(id)
-    res.send({ data })
+    try {
+        const { id } = req.params
+        const data = await contactsModel.findById(id)
+        res.send({ data })
+    } catch (error) {
+        handleHttpError(res, 'ERROR_GET_CONTACT')
+    }
 }
 
 /**
@@ -30,17 +39,45 @@ const getContact = async (req, res) => {
  * @param res - The response object.
  */
 const addContact = async (req, res) => {
-    const { body } = req
-    const data = await contactsModel.create(body)
-    res.send({data})
+    try {
+        const { body } = req
+        const data = await contactsModel.create(body)
+        res.send({ data })
+    } catch (error) {
+        handleHttpError(res, 'ERROR_ADD_CONTACT')
+    }
 }
 
-const updateContact = (req, res) => {
-
+/**
+ * It takes a request and a response, and then it finds a contact by its id and updates it with the
+ * body of the request.
+ * @param req - The request object.
+ * @param res - The response object.
+ */
+const updateContact = async (req, res) => {
+    try {
+        const { body, params } = req
+        const { id } = params
+        const data = await contactsModel.findByIdAndUpdate(id, body)
+        res.send({ data })
+    } catch (error) {
+        handleHttpError(res, 'ERROR_UPDATE_CONTACT')
+    }
 }
 
-const deleteContact = (req, res) => {
-
+/**
+ * It deletes a contact from the database.
+ * @param req - request
+ * @param res - The response object.
+ */
+const deleteContact = async (req, res) => {
+    try {
+        const { id } = req.params
+        const data = await contactsModel.findByIdAndDelete(id)
+        res.send({ data })
+    } catch (error) {
+        handleHttpError(res, 'ERROR_DELETE_CONTACTS')
+    }
 }
 
 module.exports = { getContacts, getContact, addContact, updateContact, deleteContact }
